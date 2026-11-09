@@ -165,6 +165,20 @@ for x, y, z in zip(employees, pubkey, privkey):
   with open(x + "_ca.txt", "w") as f:
     f.write(f"{y}\n")
     f.write (f"{z}\n")
+
+    if x == "Alice":
+      f.write("att1 att2\n")
+    elif x == "Bob":
+      f.write("att1 att3 att4\n")
+    elif x == "Charlie":
+      f.write("att4 att5\n")
+    elif x == "Daisy":
+      f.write("att2 att2\n")
+    elif x == "Emmy":
+      f.write("att1 att2 att3 att4 att5\n")
+
+#COULD USE DICTIONARY
+
   
 
 #print(employees)
