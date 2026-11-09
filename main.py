@@ -96,6 +96,8 @@ def pad(s):
   return s + b"\0" * (AES.block_size - len(s) % AES.block_size)
 
 
+#ENCRYPTING AND DECRYPTING AES FUNCTIONS
+#FOR SYMMETRIC PRIVATE KEY  K
 
 def encrypt(message, key, key_size=256):
 
@@ -120,38 +122,26 @@ def decrypt(ciphertext, key):
   return plaintext.rstrip(b"\0")
 
 
+#USING RSA TO ENCRYPT PUBLIC AND PRIVATE KEYS FOR USERS
+
+
 if __name__== "__main__":
-
-
-
-
 
   (pubkeyA, privkeyA) = rsa.newkeys(1024)
 
-
-
   (pubkeyB, privkeyB) = rsa.newkeys(1024)
-
-
 
   (pubkeyC, privkeyC) = rsa.newkeys(1024)
 
+  (pubkeyD, privkeyD) = rsa.newkeys(1024)
 
-
-
+  (pubkeyE, privekeyE) = rsa.newkeys(1024)
 
   #msg = b'A message for signing'
 
 
-
-
-
   key = b'123cyberarena123'
-
-
-
   print("The entered key is:", key)
-
 
 
   Alice_sharkey = rsa.encrypt(key, pubkeyA)
@@ -159,3 +149,25 @@ if __name__== "__main__":
   Bob_sharkey = rsa.encrypt(key, pubkeyB)
 
   Charlie_sharkey = rsa.encrypt(key, pubkeyC)
+
+  Daisy_sharkey = rsa.encrypt(key, pubkeyD)
+
+  Emmy_sharkey = rsa.encrypt(key, pubkeyE)
+
+
+employees = ["Alice", "Bob", "Charlie", "Daisy", "Emmy"]
+pubkey = [pubkeyA, pubkeyB, pubkeyC, pubkeyD, pubkeyE]
+privkey = [privkeyA, privkeyB, privkeyC, privkeyD, privekeyE]
+
+
+
+for x, y, z in zip(employees, pubkey, privkey):
+  with open(x + "_ca.txt", "w") as f:
+    f.write(f"{y}\n")
+    f.write (f"{z}\n")
+  
+
+#print(employees)
+#print(employees[3])
+
+#print(privkeyB)
