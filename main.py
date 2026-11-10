@@ -40,7 +40,7 @@ What To Do:
     - encrypt plaintext.txt --> plaintext.txt.enc
     - Process: 
         includes policy 
-        this files is only access by people satisfy this condition:
+        this files is only accessed by people satisfy this condition:
 
             (ATT1 AND ATT2) OR (ATT3 AND ATT4 AND ATT5)
 
@@ -135,7 +135,7 @@ if __name__== "__main__":
 
   (pubkeyD, privkeyD) = rsa.newkeys(1024)
 
-  (pubkeyE, privekeyE) = rsa.newkeys(1024)
+  (pubkeyE, privkeyE) = rsa.newkeys(1024)
 
   #msg = b'A message for signing'
 
@@ -157,15 +157,14 @@ if __name__== "__main__":
 
 employees = ["Alice", "Bob", "Charlie", "Daisy", "Emmy"]
 pubkey = [pubkeyA, pubkeyB, pubkeyC, pubkeyD, pubkeyE]
-privkey = [privkeyA, privkeyB, privkeyC, privkeyD, privekeyE]
-
+privkey = [privkeyA, privkeyB, privkeyC, privkeyD, privkeyE]
+sharekey = [Alice_sharkey, Bob_sharkey, Charlie_sharkey, Daisy_sharkey, Emmy_sharkey]
 
 
 for x, y, z in zip(employees, pubkey, privkey):
   with open(x + "_ca.txt", "w") as f:
     f.write(f"{y}\n")
     f.write (f"{z}\n")
-
     if x == "Alice":
       f.write("att1 att2\n")
     elif x == "Bob":
@@ -177,9 +176,35 @@ for x, y, z in zip(employees, pubkey, privkey):
     elif x == "Emmy":
       f.write("att1 att2 att3 att4 att5\n")
 
-#COULD USE DICTIONARY
+f.close()
 
-  
+for p,r in zip(employees, sharekey):
+  with open(p + "_sharekey.txt", "w") as f:
+    f.write(f"{r}\n")
+
+f.close()
+
+employee =  input("which employee key do you want to decrypt?: ")
+
+if employee == "Alice":
+  f = open(employee + "_ca.txt")
+  f.readline()
+  a = f.readline()
+  k = rsa.decrypt(Alice_sharkey, a)
+  print(k)
+  f.close()
+#COULD USE DICTIONARY; not using it, too complicated for lookup
+
+
+#users = { 
+  #"userspubkey" : {"Alice" : pubkeyA, "Bob": pubkeyB, "Charlie": pubkeyC, "Daisy": pubkeyD, "Emmy": pubkeyE},
+  #"userprivkey" : {"Alice" : privkeyA, "Bob": privkeyB, "Charlie": privkeyC, "Daisy": privkeyD, "Emmy": privkeyE},
+  #}
+
+#print("This is Alice's Private Key: ",users["userprivkey"]["Alice"])
+
+#for key, value in users["userspubkey"]:
+  #print(key)
 
 #print(employees)
 #print(employees[3])
