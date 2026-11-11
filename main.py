@@ -40,7 +40,7 @@ What To Do:
     - encrypt plaintext.txt --> plaintext.txt.enc
     - Process: 
         includes policy 
-        this files is only accessed by people satisfy this condition:
+        this file is only accessed by people satisfy this condition:
 
             (ATT1 AND ATT2) OR (ATT3 AND ATT4 AND ATT5)
 
@@ -137,6 +137,9 @@ if __name__== "__main__":
 
   (pubkeyE, privkeyE) = rsa.newkeys(1024)
 
+  
+  
+
   #msg = b'A message for signing'
 
 
@@ -153,6 +156,7 @@ if __name__== "__main__":
   Daisy_sharkey = rsa.encrypt(key, pubkeyD)
 
   Emmy_sharkey = rsa.encrypt(key, pubkeyE)
+
 
 
 employees = ["Alice", "Bob", "Charlie", "Daisy", "Emmy"]
@@ -179,20 +183,59 @@ for x, y, z in zip(employees, pubkey, privkey):
 f.close()
 
 for p,r in zip(employees, sharekey):
-  with open(p + "_sharekey.txt", "w") as f:
-    f.write(f"{r}\n")
+  with open(p + "_sharekey.txt", "w") as b:
+    b.write(f"{r}\n")
 
-f.close()
+b.close()
 
 employee =  input("which employee key do you want to decrypt?: ")
 
 if employee == "Alice":
-  f = open(employee + "_ca.txt")
-  f.readline()
-  a = f.readline()
-  k = rsa.decrypt(Alice_sharkey, a)
+  d = open(employee + "_ca.txt")
+  d.readline()
+  a = d.readline()
+  k = rsa.decrypt(Alice_sharkey, privkeyA)
   print(k)
-  f.close()
+  d.close()
+
+with open("plaintext.txt","w") as z:
+  z.write("Only Alice, Bob, Emmy, and Daisy will be able to see this file. If you see this file and are not autorize to do so, you will be fired.")
+
+new_secret = rsa.decrypt(Alice_sharkey, privkeyA)
+with open("plaintext.txt", "rb") as f:
+  data = f.read()
+
+new_encryption = encrypt(data, new_secret)
+
+with open("plaintext.txt.enc", "wb") as f:
+  f.write(new_encryption)
+
+with open("plaintext.txt.enc", "rb") as f:
+  text = f.read()
+
+decrypted = decrypt(text, new_secret)
+print(decrypted)
+
+"""
+z = open("plaintext.txt","rb")
+data = z.read()
+print(data)
+z.close()
+
+encrypted_data = encrypt(data, k)
+
+f2 = open("plaintext.txt.enc", "wb")
+f2.write(encrypted_data)
+
+
+f2.close()
+
+
+"""
+
+
+
+
 #COULD USE DICTIONARY; not using it, too complicated for lookup
 
 
