@@ -44,7 +44,7 @@ What To Do:
 
             (ATT1 AND ATT2) OR (ATT3 AND ATT4 AND ATT5)
 
-            which are basically Alice Bob Emmy and Daisy
+            which are basically Alice Emmy and Daisy
 
         
 5. When trying to decrypt the plaintext.txt.enc file: 
@@ -158,11 +158,18 @@ if __name__== "__main__":
   Emmy_sharkey = rsa.encrypt(key, pubkeyE)
 
 
-
+#making sharkey files and ca files
 employees = ["Alice", "Bob", "Charlie", "Daisy", "Emmy"]
 pubkey = [pubkeyA, pubkeyB, pubkeyC, pubkeyD, pubkeyE]
 privkey = [privkeyA, privkeyB, privkeyC, privkeyD, privkeyE]
 sharekey = [Alice_sharkey, Bob_sharkey, Charlie_sharkey, Daisy_sharkey, Emmy_sharkey]
+userattrib = {
+  "Alice" : {"attr1": "yes", "attr2": "yes", "attr3": "no", "attr4": "no", "attr5": "yes"},
+  "Bob" : {"attr1": "yes", "attr2": "no", "attr3": "yes", "attr4": "yes", "attr5": "no"},
+  "Charlie" : {"attr1": "no", "attr2": "no", "attr3": "no", "attr4": "yes", "attr5": "yes"},
+  "Daisy" : {"attr1": "yes", "attr2": "yes", "attr3": "no", "attr4": "no", "attr5": "no"},
+  "Emmy" : {"attr1": "yes", "attr2": "yes", "attr3": "yes", "attr4": "yes", "attr5": "yes"},
+}
 
 
 for x, y, z in zip(employees, pubkey, privkey):
@@ -188,6 +195,7 @@ for p,r in zip(employees, sharekey):
 
 b.close()
 
+#decryption of employee key
 employee =  input("which employee key do you want to decrypt?: ")
 
 if employee == "Alice":
@@ -198,6 +206,8 @@ if employee == "Alice":
   print(k)
   d.close()
 
+
+#creating plaintext file and encrypting/decrypting it
 with open("plaintext.txt","w") as z:
   z.write("Only Alice, Bob, Emmy, and Daisy will be able to see this file. If you see this file and are not autorize to do so, you will be fired.")
 
@@ -232,6 +242,31 @@ f2.close()
 
 
 """
+
+#attribute based decryption: 
+
+for user, attrib in userattrib.items(): 
+  if((attrib["attr1"] == "yes" and attrib["attr2"] == "yes") or (attrib["attr3"] == "yes" and attrib["attr4"] == "yes" and attrib["attr5"] == "yes") ):
+    print(f"{user} can decrypt plaintext file.\n")
+  else: 
+    print("employees cannot decrypt plaintext file.\n")
+
+
+
+
+
+#for p in employees:
+  #with open(p + "_ca.txt", "r") as f:
+    #f.readline()
+    #f.readline()
+    #att = f.readline()
+    #print(att)
+    #if( att == "att1" and att == "att2" ) or (att == "att3 att4 att5"):
+      #print(f"{p} can decrypt the plaintext file\n")
+    #else:
+      #print("Employee cannot decrypt the plain text file.\n")
+
+
 
 
 
