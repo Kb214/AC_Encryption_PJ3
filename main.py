@@ -163,6 +163,16 @@ employees = ["Alice", "Bob", "Charlie", "Daisy", "Emmy"]
 pubkey = [pubkeyA, pubkeyB, pubkeyC, pubkeyD, pubkeyE]
 privkey = [privkeyA, privkeyB, privkeyC, privkeyD, privkeyE]
 sharekey = [Alice_sharkey, Bob_sharkey, Charlie_sharkey, Daisy_sharkey, Emmy_sharkey]
+
+userkeys={
+  "Alice" : {"priv" : privkeyA, "pub":pubkeyA, "share": Alice_sharkey},
+  "Bob" : {"priv" : privkeyB, "pub":pubkeyB, "share": Bob_sharkey},
+  "Charlie" : {"priv" : privkeyC, "pub":pubkeyC, "share": Charlie_sharkey},
+  "Daisy" : {"priv" : privkeyD, "pub":pubkeyD, "share": Daisy_sharkey},
+  "Emmy" : {"priv" : privkeyE, "pub":pubkeyE, "share": Emmy_sharkey},
+
+}
+
 userattrib = {
   "Alice" : {"attr1": "yes", "attr2": "yes", "attr3": "no", "attr4": "no", "attr5": "yes"},
   "Bob" : {"attr1": "yes", "attr2": "no", "attr3": "yes", "attr4": "yes", "attr5": "no"},
@@ -196,6 +206,7 @@ for p,r in zip(employees, sharekey):
 b.close()
 
 #decryption of employee key
+"""
 employee =  input("which employee key do you want to decrypt?: ")
 
 if employee == "Alice":
@@ -205,9 +216,10 @@ if employee == "Alice":
   k = rsa.decrypt(Alice_sharkey, privkeyA)
   print(k)
   d.close()
-
+"""
 
 #creating plaintext file and encrypting/decrypting it
+
 with open("plaintext.txt","w") as z:
   z.write("Only Alice, Bob, Emmy, and Daisy will be able to see this file. If you see this file and are not autorize to do so, you will be fired.")
 
@@ -252,8 +264,50 @@ for user, attrib in userattrib.items():
     print("employees cannot decrypt plaintext file.\n")
 
 
+#revoking attributes: Emmy, write into file and change attributes, made revocation log file
+
+revoke = input("whose attribute do you want to revoke?: ")
+at = input(f"which attribute you want to revoke for {revoke}?: " )
+
+from datetime import datetime, timezone
+
+now = datetime.now()
+readable_ts = now.strftime("%Y-%m-%d %H:%M:%S")
+
+utc_ts = datetime.now(timezone.utc).isoformat()
 
 
+userattrib[revoke].update({at : "no" })
+
+with open("revocation_log.txt","w") as f:
+  f.write(f"{readable_ts}, {revoke}, {at} REVOKED")
+
+print(userkeys[revoke]["pub"])
+print(userkeys[revoke]["priv"])
+
+if revoke in userattrib:
+  yes_attributes = [
+    attribute
+    for attribute, value in userattrib[revoke].items()
+    if value == "yes"
+  ]
+  print(" ".join(yes_attributes))
+else:
+  print(f"unknown user: {revoke}")
+
+
+with open(f"{revoke}_ca.txt","w") as f:
+  f.write(f"{userkeys[revoke]["pub"]}\n")
+  f.write(f"{userkeys[revoke]["priv"]}\n")
+  if revoke in userattrib:
+    for attribute, value in userattrib[revoke].items():
+      if value == "yes":
+        f.write(f"{attribute} ")
+  
+
+
+
+#print(userattrib)
 
 #for p in employees:
   #with open(p + "_ca.txt", "r") as f:
