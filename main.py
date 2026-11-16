@@ -218,7 +218,7 @@ if employee == "Alice":
   d.close()
 """
 
-#creating plaintext file and encrypting/decrypting it
+#creating plaintext file and encrypting/decrypting it !!!![I DID THIS WRONG; REDO IT]!!!!
 
 with open("plaintext.txt","w") as z:
   z.write("Only Alice, Bob, Emmy, and Daisy will be able to see this file. If you see this file and are not autorize to do so, you will be fired.")
@@ -304,6 +304,11 @@ with open(f"{revoke}_ca.txt","w") as f:
       if value == "yes":
         f.write(f"{attribute} ")
   
+
+#key rotation 
+
+
+
 
 
 
