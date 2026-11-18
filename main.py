@@ -89,6 +89,8 @@ import base64
 
 import rsa
 
+import os 
+
 
 
 
@@ -296,6 +298,14 @@ else:
   print(f"unknown user: {revoke}")
 
 
+for user, attrib in userattrib.items(): 
+  if((attrib["attr1"] == "yes" and attrib["attr2"] == "yes") or (attrib["attr3"] == "yes" and attrib["attr4"] == "yes" and attrib["attr5"] == "yes") ):
+    print(f"{user} can decrypt plaintext file.\n")
+  else: 
+    print("employees cannot decrypt plaintext file.\n")
+
+
+
 with open(f"{revoke}_ca.txt","w") as f:
   f.write(f"{userkeys[revoke]["pub"]}\n")
   f.write(f"{userkeys[revoke]["priv"]}\n")
@@ -307,10 +317,45 @@ with open(f"{revoke}_ca.txt","w") as f:
 
 #key rotation 
 
+"""
+7. When revoke the attribute: 
+    - generate a new AES key [name K]
+    - rencrypts plain.txt to plain.txt.enc
+    - old key is destroyed
+    - the sharekey.txt files are now encrypted with the new key
+        - ONLY for people who satisfy the policy
+        - The ones who don't WILL NOT have a sharekey files
+
+"""
 
 
+new_k = os.urandom(32)
 
+with open("plaintext.txt", "rb") as f:
+  plain = f.read()
 
+rotation = encrypt(plain, new_k)
+
+with open("plaintext.txt.enc", "wb") as f:
+  f.write(rotation)
+
+for employee in employees: 
+  sharekey = f"{employee}_sharekey.txt"
+
+  if((userattrib[employee]["attr1"] == "yes" and userattrib[employee]["attr2"] == "yes") or (userattrib[employee]["attr3"] == "yes" and userattrib[employee]["attr4"] == "yes" and userattrib[employee]["attr5"] == "yes") ):
+
+    rotation = rsa.encrypt(new_k, userkeys[employee]["pub"])
+
+    with open(sharekey, "wb") as f:
+      f.write(rotation)
+    
+  elif os.path.exists(sharekey):
+      os.remove(sharekey)
+
+print("The sharekey files that remain:")
+for employee in employees: 
+  if os.path.exists(f"{employee}_sharekey.txt"):
+    print(f"{employee}_sharekey.txt")
 
 #print(userattrib)
 
