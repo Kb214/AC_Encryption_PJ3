@@ -239,7 +239,7 @@ print("Welcome to the Encryption File Access Control System\n===================
 i = 0
 while i < 5:
   writeEmployeeFiles(userkeys, userattrib)
-  encryptPlainTxt(key)
+  encrytext = encryptPlainTxt(key)
   print("What would you like to do?\n")
   print(" 1.print out all of the sharekey files\n 2.print the decrypted data of the plaintext file.\n 3.print the encrypted data of plaintext file\n 4.Revoke employee key\n 5.EXIT")
   user_in = input("Choice:")
@@ -261,11 +261,11 @@ while i < 5:
        print(f"{employee} is NOT authorized.\n")
     else: 
        print("Uknoown. Enter Valid name.\n")
-  
-       
-   
 
-  #elif user_in == 3:
+  elif user_in == "3":
+    with open("plaintext2.txt.enc", "rb") as f:
+       encryData = f.read()
+    print(encryData)
 
   #elif user_in == 4:
     
