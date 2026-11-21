@@ -80,7 +80,7 @@ What To Do:
 
 """
 
-from datetime import datetime, timezone
+from datetime import datetime
 from Crypto import Random
 
 from Crypto.Cipher import AES
@@ -120,38 +120,38 @@ def decrypt(ciphertext, key):
 
 
 
+
+#MY FUNCTIONS
+
 def outputShareFile(employeelist):
   for emp in employeelist:
-    print(f"{emp}_sharekey2.txt\n")
+    print(f"{emp}_sharekey.txt\n")
 
 
 
-def writeEmployeeFiles(keylist, attriblist):
-    for user, definition in keylist.items():
-        with open(f"{user}_ca2.txt", "w") as f:
-            f.write(f"{keylist[user]["pub"]}\n")
-            f.write(f"{keylist[user]["priv"]}\n")
+def writeEmployeeFiles(keydict, attribdict):
+    for user, definition in keydict.items():
+        with open(f"{user}_ca.txt", "w") as f:
+            f.write(f"{keydict[user]["pub"]}\n")
+            f.write(f"{keydict[user]["priv"]}\n")
 
 
-    for user, definition in attriblist.items():
-        with open(f"{user}_ca2.txt", "a") as f:
+    for user, definition in attribdict.items():
+        with open(f"{user}_ca.txt", "a") as f:
             yes_attributes = [
                 attribute
-                for attribute, value in attriblist[user].items()
+                for attribute, value in attribdict[user].items()
                 if value == "yes"
             ]
             f.write(f"{" ".join(yes_attributes)}")
 
-    for user, definition in keylist.items():
+    for user, definition in keydict.items():
       with open(f"{user}_sharekey.txt", "w") as f:
-         f.write(f"{keylist[user]["share"]}")
+         f.write(f"{keydict[user]["share"]}")
 
 
         
 def encryptPlainTxt(usersecret):
-  with open("plaintext.txt","w") as f:
-    f.write("Only Alice, Emmy, and Daisy will be able to see this file. If you see this file and are not autorize to do so, you will be fired.")
-
   with open("plaintext.txt", "rb") as f:
     data = f.read()
 
@@ -167,31 +167,23 @@ def encryptPlainTxt(usersecret):
   print(decrypted, "\n")
 
 
-      
-      
-#def decryptPlainTxt(usersecret): 
- 
-  #with open("plaintext.txt.enc", "rb") as f:
-   # text = f.read()
 
-  #decrypted = decrypt(text, usersecret)
-  #print(decrypted, "\n") 
-      
 
-def revokeUA(revokeUser, revokeAttrib, attriblist, keylist):
+
+def revokeUA(revokeUser, revokeAttrib, attribdict, keydict):
   now = datetime.now()
   readable_ts = now.strftime("%Y-%m-%d %H:%M:%S")
 
-  attriblist[revokeUser].update({revokeAttrib : "no" })
+  attribdict[revokeUser].update({revokeAttrib : "no" })
 
   with open("revocation_log.txt","a") as f:
-    f.write(f"{readable_ts}, {revokeUser}, {revokeAttrib} REVOKED")
+    f.write(f"{readable_ts}, {revokeUser}, {revokeAttrib} REVOKED\n")
 
   with open(f"{revokeUser}_ca.txt","w") as f:
-    f.write(f"{keylist[revokeUser]["pub"]}\n")
-    f.write(f"{keylist[revokeUser]["priv"]}\n")
-    if revokeUser in attriblist:
-      for attribute, value in attriblist[revokeUser].items():
+    f.write(f"{keydict[revokeUser]["pub"]}\n")
+    f.write(f"{keydict[revokeUser]["priv"]}\n")
+    if revokeUser in attribdict:
+      for attribute, value in attribdict[revokeUser].items():
         if value == "yes":
           f.write(f"{attribute} ")
 
@@ -224,6 +216,8 @@ def rotate(employeesatt):
         os.remove(sharekey)
 
 
+
+#SHAREKEY MAKING
 if __name__== "__main__":
 
   (pubkeyA, privkeyA) = rsa.newkeys(1024)
@@ -285,10 +279,14 @@ userattrib = {
 
 
 print("\n|Welcome to the Encryption File Access Control System|\n|====================================================|\n")
+with open("plaintext.txt","w") as f:
+  f.write("Only Alice, Emmy, and Daisy will be able to see this file. If you see this file and are not autorize to do so, you will be fired.")
+writeEmployeeFiles(userkeys, userattrib)
+  
 
 i = 0
 while i < 5:
-  writeEmployeeFiles(userkeys, userattrib)
+ 
   print("=====================\nWhat would you like to do?\n")
   print(" 1.print out all of the sharekey files\n 2.print the decrypted data of the plaintext file.\n 3.print the encrypted data of plaintext file\n 4.Revoke employee key\n 5.EXIT\n=====================")
   user_in = input("Choice:")
@@ -301,7 +299,9 @@ while i < 5:
 
     employee = input("\nWhich user credential you want to use to decrypt the plaintext.txt.enc file? : ").strip()
 
-    if(employee in userattrib and ((userattrib[employee]["attr1"] == "yes" and userattrib[employee]["attr2"] == "yes") or (userattrib[employee]["attr3"] == "yes" and userattrib[employee]["attr4"] == "yes" and userattrib[employee]["attr5"] == "yes")) ):
+    if(employee in userattrib and ((userattrib[employee]["attr1"] == "yes" and userattrib[employee]["attr2"] == "yes") or (
+      userattrib[employee]["attr3"] == "yes" and userattrib[employee]["attr4"] == "yes" and userattrib[employee]["attr5"] == "yes")) ):
+
       print(f"{employee} approved!\n")
 
       print("==========Decrypted Plaintext File:==========\n")
@@ -310,10 +310,10 @@ while i < 5:
     elif employee in userattrib:
        print(f"{employee} is NOT authorized.\n")
     else: 
-       print("Uknoown. Enter Valid name.\n")
+       print("Uknown. Enter Valid name.\n")
 
   elif user_in == "3":
-    with open("plaintext2.txt.enc", "rb") as f:
+    with open("plaintext.txt.enc", "rb") as f:
       encryData = f.read()
     print(encryData, "\n")
 
